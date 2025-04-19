@@ -5,12 +5,16 @@ class StoreScreen extends StatefulWidget {
   final String userName;
   final int points;
   final int coins;
+  final Function(int) onPointsUpdated;
+  final Function(int) onCoinsUpdated;
 
   const StoreScreen({
     super.key,
     required this.userName,
     required this.points,
     required this.coins,
+    required this.onPointsUpdated,
+    required this.onCoinsUpdated,
   });
 
   @override
@@ -42,10 +46,12 @@ class _StoreScreenState extends State<StoreScreen> with SingleTickerProviderStat
       if (currency == 'points' && currentPoints >= cost) {
         currentPoints -= cost;
         purchasedItems.add(item);
+        widget.onPointsUpdated(-cost);
         showSuccess("Item purchased with points!");
       } else if (currency == 'coins' && currentCoins >= cost) {
         currentCoins -= cost;
         purchasedItems.add(item);
+        widget.onCoinsUpdated(-cost);
         showSuccess("Item purchased with coins!");
       } else {
         _showBuyMoreDialog(currency);
@@ -75,7 +81,10 @@ class _StoreScreenState extends State<StoreScreen> with SingleTickerProviderStat
               Navigator.pop(context);
               final result = await Navigator.pushNamed(context, '/buy');
               if (result != null && result is int) {
-                setState(() => currentCoins += result);
+                setState(() {
+                  currentCoins += result;
+                  widget.onCoinsUpdated(result);
+                });
               }
             },
             child: const Text('Buy More'),

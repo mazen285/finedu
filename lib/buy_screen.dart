@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class BuyCoinsScreen extends StatefulWidget {
-  const BuyCoinsScreen({super.key});
+  final Function(int) onCoinsPurchased;
+
+  const BuyCoinsScreen({super.key, required this.onCoinsPurchased});
 
   @override
   State<BuyCoinsScreen> createState() => _BuyCoinsScreenState();
@@ -13,6 +15,9 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreen> {
 
   void purchase(BuildContext context, String label, int amount, String price) {
     setState(() => coinsPurchased += amount);
+
+    // Call the callback to update app state
+    widget.onCoinsPurchased(amount);
 
     showDialog(
       context: context,
@@ -25,7 +30,10 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreen> {
           children: [
             Text('You purchased $amount coins for $price.'),
             const SizedBox(height: 10),
-            const Text('Thank you for supporting FinEdu!', style: TextStyle(fontWeight: FontWeight.w600)),
+            const Text(
+              'Thank you for supporting FinEdu!',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
           ],
         ),
         actions: [
@@ -107,7 +115,9 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreen> {
                     children: [
                       const Icon(Icons.monetization_on, size: 32, color: Colors.green),
                       const SizedBox(width: 12),
-                      Text('$amount Coins', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w600)),
+                      Text('$amount Coins',
+                          style: GoogleFonts.poppins(
+                              fontSize: 18, fontWeight: FontWeight.w600)),
                       const Spacer(),
                       ElevatedButton(
                         onPressed: () => purchase(context, label, amount, price),
@@ -117,7 +127,8 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreen> {
                   ),
                   const SizedBox(height: 10),
                   Text(label, style: GoogleFonts.poppins(fontSize: 16)),
-                  Text(desc, style: GoogleFonts.poppins(fontSize: 13, color: Colors.grey[600])),
+                  Text(desc,
+                      style: GoogleFonts.poppins(fontSize: 13, color: Colors.grey[600])),
                 ],
               ),
             ),
