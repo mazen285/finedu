@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'achievement_screen.dart';
 
@@ -47,6 +48,12 @@ class _HomeScreenState extends State<HomeScreen> {
     widget.onCoinsUpdated(earnedCoins);
   }
 
+  void _logout() async {
+    await FirebaseAuth.instance.signOut();
+    if (!mounted) return;
+    Navigator.pushReplacementNamed(context, '/');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,19 +93,31 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Text(
                   'Welcome back,',
-                  style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey[600]),
+                  style: GoogleFonts.poppins(
+                      fontSize: 14, color: Colors.grey[600]),
                 ),
                 Text(
                   widget.userName,
-                  style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.w600),
+                  style: GoogleFonts.poppins(
+                      fontSize: 20, fontWeight: FontWeight.w600),
                 ),
               ],
             ),
           ],
         ),
-        IconButton(
-          onPressed: () => Navigator.pushNamed(context, '/profile'),
-          icon: const Icon(Icons.settings),
+        Row(
+          children: [
+            IconButton(
+              onPressed: _logout,
+              icon: const Icon(Icons.logout),
+              tooltip: 'Logout',
+            ),
+            IconButton(
+              onPressed: () => Navigator.pushNamed(context, '/profile'),
+              icon: const Icon(Icons.settings),
+              tooltip: 'Profile',
+            ),
+          ],
         ),
       ],
     );
@@ -195,9 +214,14 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisSpacing: 20,
         padding: const EdgeInsets.only(bottom: 10),
         children: [
-          _buildGridItem(context, title: 'Lessons', icon: Icons.menu_book_rounded, route: '/lesson'),
-          _buildGridItem(context, title: 'Quizzes', icon: Icons.quiz_rounded, route: '/quiz'),
-          _buildGridItem(context, title: 'Store', icon: Icons.storefront, route: '/store'),
+          _buildGridItem(context,
+              title: 'Lessons',
+              icon: Icons.menu_book_rounded,
+              route: '/lesson'),
+          _buildGridItem(context,
+              title: 'Quizzes', icon: Icons.quiz_rounded, route: '/quiz'),
+          _buildGridItem(context,
+              title: 'Store', icon: Icons.storefront, route: '/store'),
           GestureDetector(
             onTap: () {
               Navigator.push(
